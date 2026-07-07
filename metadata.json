@@ -2,7 +2,7 @@
   "uuid": "moddownloads@avatarkage",
   "name": "Mod Downloads Counter",
   "description": "Displays CurseForge and Modrinth downloads with milestone notifications",
-  "url": "https://github.com/avatarkage/color-button",
+  "url": "https://github.com/AvatarKage/mod-downloads-counter",
   "version": 1,
   "shell-version": [
     "50"
