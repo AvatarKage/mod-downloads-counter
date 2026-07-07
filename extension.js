@@ -167,59 +167,63 @@ export default class ModDownloadsExtension extends Extension {
     }
 
     async curseforge() {
-        let token =
-            this.settings.get_string(
-                "curseforge-token"
-            );
-
-        let authorId =
-            this.settings.get_string(
-                "curseforge-author"
-            );
+        let token = this.settings.get_string("curseforge-token");
+        let authorId = this.settings.get_string("curseforge-author");
 
         if (!token || !authorId) return 0;
 
         let total = 0;
-        let index = 0;
-        let pageSize = 50;
 
-        while (true) {
-            let url =
-                "https://api.curseforge.com/v1/mods/search?" +
-                "gameId=432" +
-                "&primaryAuthorId=" + authorId +
-                "&sortField=6" +
-                "&sortOrder=desc" +
-                "&index=" + index +
-                "&pageSize=" + pageSize;
+        let gameIds = [
+            432, // Minecraft Java
+            78022, // Minecraft Bedrock
+            70216 // Hytale
+        ];
 
-            let data =
-                await this.request(
-                    url,
-                    {
-                        "x-api-key": token,
-                        "Accept": "application/json"
-                    }
-                );
+        for (let gameId of gameIds) {
+            let index = 0;
+            let pageSize = 50;
 
-            if (!data.data || data.data.length === 0) break;
+            while (true) {
+                let url =
+                    "https://api.curseforge.com/v1/mods/search?" +
+                    "gameId=" + gameId +
+                    "&primaryAuthorId=" + authorId +
+                    "&sortField=6" +
+                    "&sortOrder=desc" +
+                    "&index=" + index +
+                    "&pageSize=" + pageSize;
 
-            for (let mod of data.data) {
-                total +=
-                    mod.downloadCount ?? 0;
+                let data =
+                    await this.request(
+                        url,
+                        {
+                            "x-api-key": token,
+                            "Accept": "application/json"
+                        }
+                    );
+
+                if (!data.data || data.data.length === 0)
+                    break;
+
+                for (let mod of data.data) {
+                    total += mod.downloadCount ?? 0;
+                }
+
+                if (data.data.length < pageSize)
+                    break;
+
+                index += pageSize;
+
+                if (index > 5000)
+                    break;
             }
-
-            if (data.data.length < pageSize) break;
-
-            index += pageSize;
-
-            if (index > 5000) break;
         }
 
         return total;
     }
 
-        async modrinth() {
+    async modrinth() {
         let author = this.settings.get_string("modrinth-author");
 
         if (!author) return 0;
@@ -300,11 +304,30 @@ export default class ModDownloadsExtension extends Extension {
             this.timer = null;
         }
 
-        if (this.settingsChangedId) {
-            this.settings.disconnect(
-                this.settingsChangedId
-            );
-            this.settingsChangedId = null;
+        if (this.settings) {
+            if (this.settingsChangedId) {
+                this.settings.disconnect(
+                    this.settingsChangedId
+                );
+                this.settingsChangedId = null;
+            }
+
+            this.settings = null;
+        }
+
+        if (this.label) {
+            this.label.destroy();
+            this.label = null;
+        }
+
+        if (this.icon) {
+            this.icon.destroy();
+            this.icon = null;
+        }
+
+        if (this.box) {
+            this.box.destroy();
+            this.box = null;
         }
 
         if (this.indicator) {
@@ -312,6 +335,12 @@ export default class ModDownloadsExtension extends Extension {
             this.indicator = null;
         }
 
-        this.session = null;
+        if (this.session) {
+            this.session.abort();
+            this.session = null;
+        }
+
+        this.milestones = null;
+        this.lastMilestone = null;
     }
 }
