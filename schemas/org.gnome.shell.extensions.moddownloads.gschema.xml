@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+    <schema
+        id="org.gnome.shell.extensions.moddownloads"
+        path="/org/gnome/shell/extensions/moddownloads/">
+
+        <key name="curseforge-token" type="s">
+            <default>''</default>
+            <summary>CurseForge API token</summary>
+        </key>
+
+        <key name="curseforge-author" type="s">
+            <default>''</default>
+            <summary>CurseForge author ID</summary>
+        </key>
+
+        <key name="modrinth-author" type="s">
+            <default>''</default>
+            <summary>Modrinth author username</summary>
+        </key>
+
+        <key name="last-milestone" type="i">
+            <default>0</default>
+            <summary>Last notified milestone</summary>
+        </key>
+    </schema>
+</schemalist>

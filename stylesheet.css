@@ -1,0 +1,12 @@
+.moddownloads-box {
+    spacing: 4px;
+}
+
+.moddownloads-dot {
+    color: #ff3333;
+    font-size: 16px;
+}
+
+.moddownloads-label {
+    color: white;
+}
