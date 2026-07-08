@@ -130,7 +130,7 @@ export default class ModDownloadsExtension extends Extension {
         this.timer =
             GLib.timeout_add_seconds(
                 GLib.PRIORITY_DEFAULT,
-                300,
+                900,
                 () => {
                     this.update();
                     return GLib.SOURCE_CONTINUE;
