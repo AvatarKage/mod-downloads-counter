@@ -228,22 +228,20 @@ export default class ModDownloadsExtension extends Extension {
 
         if (!author) return 0;
 
-        let facets =
-            JSON.stringify([
-                [
-                    `author:${author}`
-                ]
-            ]);
-
-        let url =
-            "https://api.modrinth.com/v2/search?" +
-            "facets=" +
-            encodeURIComponent(facets) +
-            "&limit=100";
-
-        let data =
+        let user =
             await this.request(
-                url,
+                "https://api.modrinth.com/v2/user/" +
+                encodeURIComponent(author),
+                {
+                    "User-Agent": "moddownloads-gnome-extension"
+                }
+            );
+
+        let projects =
+            await this.request(
+                "https://api.modrinth.com/v2/user/" +
+                user.id +
+                "/projects",
                 {
                     "User-Agent": "moddownloads-gnome-extension"
                 }
@@ -251,7 +249,7 @@ export default class ModDownloadsExtension extends Extension {
 
         let total = 0;
 
-        for (let project of data.hits ?? []) {
+        for (let project of projects) {
             total += project.downloads ?? 0;
         }
 
