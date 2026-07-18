@@ -77,7 +77,7 @@ export default class ModDownloadsExtension extends Extension {
 
         this.label =
             new St.Label({
-                text: "...",
+                text: "Loading...",
                 y_align: Clutter.ActorAlign.CENTER,
                 style_class: "moddownloads-label"
             });
@@ -287,10 +287,11 @@ export default class ModDownloadsExtension extends Extension {
             this.checkMilestone(total);
 
             this.label.text = ` ${total.toLocaleString()}`;
-        }
-        catch(error) {
+        } catch (error) {
             logError(error);
-            this.label.text = " error";
+            this.label.text = "Loading...";
+
+            setTimeout(() => this.update(), 5000);
         }
     }
 
