@@ -285,22 +285,36 @@ export default class ModDownloadsExtension extends Extension {
             let total = cf + mr;
 
             this.checkMilestone(total);
-
+            
             this.label.text = ` ${total.toLocaleString()}`;
         } catch (error) {
             logError(error);
-            this.label.text = "Loading...";
 
-            setTimeout(() => this.update(), 5000);
+            if (this.label) this.label.text = "Loading...";
+
+            if (!this.retryTimer) {
+                this.retryTimer = GLib.timeout_add_seconds(
+                    GLib.PRIORITY_DEFAULT,
+                    5,
+                    () => {
+                        this.retryTimer = null;
+                        this.update();
+                        return GLib.SOURCE_REMOVE;
+                    }
+                );
+            }
         }
     }
 
     disable() {
         if (this.timer) {
-            GLib.Source.remove(
-                this.timer
-            );
+            GLib.Source.remove(this.timer);
             this.timer = null;
+        }
+
+        if (this.retryTimer) {
+            GLib.Source.remove(this.retryTimer);
+            this.retryTimer = null;
         }
 
         if (this.settings) {
